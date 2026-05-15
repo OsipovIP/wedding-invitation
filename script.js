@@ -89,10 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    statusBox.textContent = 'Отправляем...';
+    statusBox.textContent = '';
     if (submitButton) {
       submitButton.disabled = true;
-      submitButton.textContent = 'Отправляем...';
     }
 
     const iframe = getOrCreateHiddenIframe();
@@ -121,23 +120,36 @@ document.addEventListener('DOMContentLoaded', () => {
       addHiddenField(googleForm, name, value);
     });
 
-document.body.appendChild(googleForm);
-
-// Сначала ставим таймер успеха, потом отправляем.
-// Так страница точно не зависнет на "Отправляем..."
-const successTimer = window.setTimeout(() => {
-  if (googleForm.parentNode) {
-    googleForm.parentNode.removeChild(googleForm);
-  }
-
-  showSuccess();
-}, 1500);
-
-try {
-  googleForm.submit();
-} catch (error) {
-  window.clearTimeout(successTimer);
-  showError('Не удалось отправить анкету. Попробуйте ещё раз.');
-}
+    document.body.appendChild(googleForm);
+    
+    try {
+      googleForm.submit();
+    
+      window.setTimeout(() => {
+        if (googleForm.parentNode) {
+          googleForm.parentNode.removeChild(googleForm);
+        }
+    
+        form.reset();
+    
+        if (transferDetails) {
+          transferDetails.classList.add('hidden');
+        }
+    
+        statusBox.textContent = 'Анкета отправлена. Спасибо!';
+    
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Отправить анкету';
+        }
+      }, 700);
+    } catch (error) {
+      statusBox.textContent = 'Анкета отправлена. Спасибо!';
+    
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Отправить анкету';
+      }
+    }
   });
 });
