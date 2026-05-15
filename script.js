@@ -1,74 +1,134 @@
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcEhONwZ27E1ujWCnMsj9Itf2HL_GfIQ0uQhfbecYhJfw0VwffWt1eCCgYsTrYIgK6dA/exec'';
+document.addEventListener('DOMContentLoaded', () => {
+  // Вставьте сюда ссылку веб-приложения Google Apps Script. Нужна ссылка, которая заканчивается на /exec
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcEhONwZ27E1ujWCnMsj9Itf2HL_GfIQ0uQhfbecYhJfw0VwffWt1eCCgYsTrYIgK6dA/exec'';
 
-const form = document.getElementById('guestForm');
-const statusBox = document.getElementById('status');
-const transfer = document.getElementById('transfer');
-const transferDetails = document.getElementById('transferDetails');
-const submitButton = form.querySelector('button[type="submit"]');
+  const form = document.getElementById('guestForm');
+  const statusBox = document.getElementById('status');
+  const transfer = document.getElementById('transfer');
+  const transferDetails = document.getElementById('transferDetails');
 
-transfer.addEventListener('change', () => {
-  transferDetails.classList.toggle('hidden', transfer.value !== 'Да');
-});
-
-function getCheckedValues(name) {
-  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
-    .map(item => item.value)
-    .join(', ');
-}
-
-function showSuccess() {
-  form.reset();
-  transferDetails.classList.add('hidden');
-  statusBox.textContent = 'Спасибо! Анкета отправлена.';
-  submitButton.disabled = false;
-  submitButton.textContent = 'Отправить анкету';
-}
-
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  if (GOOGLE_SCRIPT_URL.includes('PASTE_GOOGLE_APPS_SCRIPT')) {
-    statusBox.textContent = 'Сначала вставьте ссылку Google Apps Script в файл script.js.';
+  if (!form || !statusBox) {
     return;
   }
 
-  const data = new FormData(form);
-  data.set('drinks', getCheckedValues('drinks'));
-  data.set('food', getCheckedValues('food'));
-  data.set('submittedAt', new Date().toISOString());
+  const submitButton = form.querySelector('button[type="submit"]');
 
-  statusBox.textContent = 'Отправляем...';
-  submitButton.disabled = true;
-  submitButton.textContent = 'Отправляем...';
+  function showTransferDetails() {
+    if (!transfer || !transferDetails) return;
+    transferDetails.classList.toggle('hidden', transfer.value !== 'Да');
+  }
 
-  let finished = false;
+  if (transfer) {
+    transfer.addEventListener('change', showTransferDetails);
+    showTransferDetails();
+  }
 
-  const finishOnce = () => {
-    if (finished) return;
-    finished = true;
-    showSuccess();
-  };
+  function valueOf(name) {
+    const field = form.elements[name];
+    return field ? String(field.value || '').trim() : '';
+  }
 
-  // Google Apps Script при mode: 'no-cors' часто принимает данные,
-  // но браузер не отдаёт нормальный ответ сайту. Поэтому показываем успех
-  // через короткую паузу, не дожидаясь полного ответа от Google.
-  const successTimer = setTimeout(finishOnce, 1800);
+  function getCheckedValues(name) {
+    return Array.from(form.querySelectorAll(`input[name="${name}"]:checked`))
+      .map(item => item.value)
+      .join(', ');
+  }
 
-  try {
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: data,
-      keepalive: true
+  function addHiddenField(targetForm, name, value) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value || '';
+    targetForm.appendChild(input);
+  }
+
+  function getOrCreateHiddenIframe() {
+    let iframe = document.getElementById('googleSubmitFrame');
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.name = 'googleSubmitFrame';
+      iframe.id = 'googleSubmitFrame';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+    return iframe;
+  }
+
+  function showSuccess() {
+    form.reset();
+    if (transferDetails) {
+      transferDetails.classList.add('hidden');
+    }
+    statusBox.textContent = 'Спасибо! Анкета отправлена.';
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Отправить анкету';
+    }
+  }
+
+  function showError(message) {
+    statusBox.textContent = message;
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Отправить анкету';
+    }
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const url = GOOGLE_SCRIPT_URL.trim();
+
+    if (!url || url.includes('PASTE_GOOGLE_APPS_SCRIPT')) {
+      showError('Сначала вставьте ссылку Google Apps Script в файл script.js.');
+      return;
+    }
+
+    if (!url.startsWith('https://script.google.com/macros/s/') || !url.endsWith('/exec')) {
+      showError('Проверьте ссылку Google Apps Script: она должна начинаться с https://script.google.com/macros/s/ и заканчиваться на /exec.');
+      return;
+    }
+
+    statusBox.textContent = 'Отправляем...';
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Отправляем...';
+    }
+
+    const iframe = getOrCreateHiddenIframe();
+
+    const googleForm = document.createElement('form');
+    googleForm.method = 'POST';
+    googleForm.action = url;
+    googleForm.target = iframe.name;
+    googleForm.style.display = 'none';
+
+    const payload = {
+      fullName: valueOf('fullName'),
+      attendance: valueOf('attendance'),
+      guestCount: valueOf('guestCount'),
+      transfer: valueOf('transfer'),
+      transferCity: valueOf('transferCity'),
+      transferDistrict: valueOf('transferDistrict'),
+      drinks: getCheckedValues('drinks'),
+      food: getCheckedValues('food'),
+      allergies: valueOf('allergies'),
+      comment: valueOf('comment'),
+      submittedAt: new Date().toISOString()
+    };
+
+    Object.entries(payload).forEach(([name, value]) => {
+      addHiddenField(googleForm, name, value);
     });
 
-    clearTimeout(successTimer);
-    finishOnce();
-  } catch (error) {
-    clearTimeout(successTimer);
-    finished = true;
-    submitButton.disabled = false;
-    submitButton.textContent = 'Отправить анкету';
-    statusBox.textContent = 'Не удалось отправить анкету. Проверьте интернет и попробуйте ещё раз.';
-  }
+    document.body.appendChild(googleForm);
+    googleForm.submit();
+
+    // Google Apps Script часто не отдаёт нормальный ответ сайту из-за ограничений браузера.
+    // Поэтому после отправки формы показываем успех и проверяем результат по строке в таблице.
+    window.setTimeout(() => {
+      googleForm.remove();
+      showSuccess();
+    }, 1600);
+  });
 });
