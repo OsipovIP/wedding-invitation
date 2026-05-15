@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Вставьте сюда ссылку веб-приложения Google Apps Script. Нужна ссылка, которая заканчивается на /exec
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcEhONwZ27E1ujWCnMsj9Itf2HL_GfIQ0uQhfbecYhJfw0VwffWt1eCCgYsTrYIgK6dA/exec'';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcEhONwZ27E1ujWCnMsj9Itf2HL_GfIQ0uQhfbecYhJfw0VwffWt1eCCgYsTrYIgK6dA/exec';
 
   const form = document.getElementById('guestForm');
   const statusBox = document.getElementById('status');
