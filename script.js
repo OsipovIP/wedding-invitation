@@ -121,14 +121,23 @@ document.addEventListener('DOMContentLoaded', () => {
       addHiddenField(googleForm, name, value);
     });
 
-    document.body.appendChild(googleForm);
-    googleForm.submit();
+document.body.appendChild(googleForm);
 
-    // Google Apps Script часто не отдаёт нормальный ответ сайту из-за ограничений браузера.
-    // Поэтому после отправки формы показываем успех и проверяем результат по строке в таблице.
-    window.setTimeout(() => {
-      googleForm.remove();
-      showSuccess();
-    }, 1600);
+// Сначала ставим таймер успеха, потом отправляем.
+// Так страница точно не зависнет на "Отправляем..."
+const successTimer = window.setTimeout(() => {
+  if (googleForm.parentNode) {
+    googleForm.parentNode.removeChild(googleForm);
+  }
+
+  showSuccess();
+}, 1500);
+
+try {
+  googleForm.submit();
+} catch (error) {
+  window.clearTimeout(successTimer);
+  showError('Не удалось отправить анкету. Попробуйте ещё раз.');
+}
   });
 });
