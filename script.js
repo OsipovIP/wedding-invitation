@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Вставьте сюда ссылку веб-приложения Google Apps Script. Нужна ссылка, которая заканчивается на /exec
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcEhONwZ27E1ujWCnMsj9Itf2HL_GfIQ0uQhfbecYhJfw0VwffWt1eCCgYsTrYIgK6dA/exec';
+  const GOOGLE_SCRIPT_URL = 'PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
   const form = document.getElementById('guestForm');
   const statusBox = document.getElementById('status');
@@ -54,12 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return iframe;
   }
 
-  function showSuccess() {
+  function finishForm() {
     form.reset();
+
     if (transferDetails) {
       transferDetails.classList.add('hidden');
     }
-    statusBox.textContent = 'Спасибо! Анкета отправлена.';
+
+    statusBox.textContent = 'Анкета отправлена. Спасибо!';
+
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.textContent = 'Отправить анкету';
@@ -68,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showError(message) {
     statusBox.textContent = message;
+
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.textContent = 'Отправить анкету';
@@ -90,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     statusBox.textContent = '';
+
     if (submitButton) {
       submitButton.disabled = true;
     }
@@ -121,35 +126,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.body.appendChild(googleForm);
-    
+
     try {
       googleForm.submit();
-    
+
       window.setTimeout(() => {
         if (googleForm.parentNode) {
           googleForm.parentNode.removeChild(googleForm);
         }
-    
-        form.reset();
-    
-        if (transferDetails) {
-          transferDetails.classList.add('hidden');
-        }
-    
-        statusBox.textContent = 'Анкета отправлена. Спасибо!';
-    
-        if (submitButton) {
-          submitButton.disabled = false;
-          submitButton.textContent = 'Отправить анкету';
-        }
+
+        finishForm();
       }, 700);
     } catch (error) {
-      statusBox.textContent = 'Анкета отправлена. Спасибо!';
-    
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = 'Отправить анкету';
-      }
+      finishForm();
     }
   });
 });

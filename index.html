@@ -10,34 +10,51 @@
 <body>
   <main>
     <section class="hero">
-      <div class="wrap hero-wrap">
+      <div class="wrap">
         <div class="hero-card">
           <p class="eyebrow">Приглашение на свадьбу</p>
-          <h1>Илья <span class="amp">&</span> Елена</h1>
-          <div class="date">08.08.26 начало фуршета 15:30</div>
+
+          <h1 class="names">
+            Илья
+            <span class="amp">&</span>
+            Елена
+          </h1>
+
+          <div class="date">08.08.26</div>
+
           <p class="lead">
             Дорогие родные и друзья! Мы будем счастливы разделить с вами день нашей свадьбы.
           </p>
+
+          <p class="place-line">
+            г. Новокузнецк • банкетный зал «Папа Карло» • начало 15:30
+          </p>
+
           <div class="btn-row">
-            <a class="btn" href="#rsvp">Заполнить анкету гостя</a>
+            <a class="btn primary" href="#rsvp">Заполнить анкету гостя</a>
             <a class="btn secondary" href="#dresscode">Дресс-код</a>
             <a class="btn secondary" href="#schedule">Расписание дня</a>
-            <a class="btn secondary" href="#place">Место празднования</a>
           </div>
         </div>
       </div>
     </section>
 
-    <section>
+    <section class="info-section">
       <div class="wrap grid">
         <div class="card center">
           <h3>Дата</h3>
           <p>08.08.26</p>
         </div>
+
         <div class="card center" id="place">
           <h3>Место</h3>
-          <p>г. Новокузнецк<br>банкетный зал «Папа Карло»<br>ул. Шахтеров, 18</p>
+          <p>
+            г. Новокузнецк<br>
+            банкетный зал «Папа Карло»<br>
+            ул. Шахтеров, 18
+          </p>
         </div>
+
         <div class="card center">
           <h3>Формат</h3>
           <p>Праздник только для взрослых гостей.</p>
@@ -46,18 +63,20 @@
       </div>
     </section>
 
-    <section id="schedule">
+    <section id="schedule" class="section">
       <div class="wrap">
         <div class="card schedule-card">
           <h2>Расписание дня</h2>
+
           <div class="schedule-list" aria-label="Расписание свадебного дня">
             <div class="schedule-item">
               <div class="schedule-time">12:30</div>
               <div class="schedule-info">
                 <h3>Регистрация</h3>
-                <p>ЗАГС,Проспект Николая Ермакова, 1 к2, Новокузнецк</p>
+                <p>ЗАГС, Проспект Николая Ермакова, 1 к2, Новокузнецк</p>
               </div>
             </div>
+
             <div class="schedule-item">
               <div class="schedule-time">15:30</div>
               <div class="schedule-info">
@@ -65,6 +84,7 @@
                 <p>Встреча гостей и лёгкие угощения</p>
               </div>
             </div>
+
             <div class="schedule-item">
               <div class="schedule-time">16:30</div>
               <div class="schedule-info">
@@ -77,19 +97,23 @@
       </div>
     </section>
 
-    <section id="dresscode">
+    <section id="dresscode" class="section">
       <div class="wrap dresscode">
         <div class="card">
           <h2>Пожелания по дресс-коду</h2>
           <p>
-            Будем рады, если вы поддержите общую атмосферу праздника и выберете образ в мягкой природной палитре: молочный, песочный, зелёный, пудрово-розовый или оливковый оттенок.
+            Будем рады, если вы поддержите общую атмосферу праздника и выберете образ
+            в мягкой природной палитре: молочный, песочный, зелёный, пудрово-розовый
+            или оливковый оттенок.
           </p>
+
           <ul class="dress-list">
             <li>Для девушек: платья, костюмы или комплекты в оттенках палитры.</li>
             <li>Для мужчин: рубашка, костюм, брюки или аксессуары в спокойных природных тонах.</li>
             <li>Не обязательно одеваться строго в один цвет — достаточно поддержать гамму деталями.</li>
           </ul>
         </div>
+
         <div class="palette" aria-label="Палитра дресс-кода">
           <div class="color cream" aria-label="Молочный"></div>
           <div class="color sand" aria-label="Песочный"></div>
@@ -100,11 +124,13 @@
       </div>
     </section>
 
-    <section id="rsvp">
+    <section id="rsvp" class="section">
       <div class="wrap">
         <div class="card form-card">
           <h2>Анкета гостя</h2>
-          <p class="center">Пожалуйста, заполните форму — это поможет нам всё правильно организовать.</p>
+          <p class="center">
+            Пожалуйста, заполните форму — это поможет нам всё правильно организовать.
+          </p>
 
           <form id="guestForm">
             <div class="row">
@@ -112,6 +138,7 @@
                 ФИО
                 <input name="fullName" type="text" placeholder="Иванов Иван Иванович" required />
               </label>
+
               <label>
                 Вы сможете прийти?
                 <select name="attendance" required>
@@ -131,6 +158,7 @@
                   <option value="Вдвоём">Вдвоём</option>
                 </select>
               </label>
+
               <label>
                 Нужен ли трансфер?
                 <select name="transfer" id="transfer" required>
@@ -146,6 +174,7 @@
                 Город
                 <input name="transferCity" type="text" placeholder="Например: Новокузнецк" />
               </label>
+
               <label>
                 Район / откуда забрать
                 <input name="transferDistrict" type="text" placeholder="Например: Центральный район" />
@@ -182,8 +211,8 @@
               <textarea name="comment" placeholder="Любая дополнительная информация"></textarea>
             </label>
 
-            <button class="btn" type="submit">Отправить анкету</button>
-            <div class="status" id="status"></div>
+            <button class="btn primary submit-btn" type="submit">Отправить анкету</button>
+            <div class="status" id="status" aria-live="polite"></div>
           </form>
         </div>
       </div>
