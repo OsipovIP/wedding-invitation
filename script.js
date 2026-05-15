@@ -13,15 +13,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const submitButton = form.querySelector('button[type="submit"]');
 
-  function showTransferDetails() {
-    if (!transfer || !transferDetails) return;
-    transferDetails.classList.toggle('hidden', transfer.value !== 'Да');
+  const attendance = form.elements['attendance'];
+const guestCount = form.elements['guestCount'];
+
+function updateAttendanceMode() {
+  const isNotComing = attendance && attendance.value === 'Нет, не смогу';
+
+  if (guestCount) {
+    guestCount.required = !isNotComing;
+
+    if (isNotComing) {
+      guestCount.value = '';
+    }
   }
 
   if (transfer) {
-    transfer.addEventListener('change', showTransferDetails);
-    showTransferDetails();
+    transfer.required = !isNotComing;
+
+    if (isNotComing) {
+      transfer.value = '';
+    }
   }
+
+  if (transferDetails && isNotComing) {
+    transferDetails.classList.add('hidden');
+  }
+
+  const transferCity = form.elements['transferCity'];
+  const transferDistrict = form.elements['transferDistrict'];
+
+  if (isNotComing) {
+    if (transferCity) transferCity.value = '';
+    if (transferDistrict) transferDistrict.value = '';
+  }
+}
+
+if (attendance) {
+  attendance.addEventListener('change', updateAttendanceMode);
+  updateAttendanceMode();
+}
+
+  function showTransferDetails() {
+  if (!transfer || !transferDetails) return;
+
+  const isNotComing = attendance && attendance.value === 'Нет, не смогу';
+
+  if (isNotComing) {
+    transferDetails.classList.add('hidden');
+    return;
+  }
+
+  transferDetails.classList.toggle('hidden', transfer.value !== 'Да');
+}
+
+  if (transfer) {
+  transfer.addEventListener('change', showTransferDetails);
+  showTransferDetails();
+}
+
+if (attendance) {
+  attendance.addEventListener('change', showTransferDetails);
+}
 
   function valueOf(name) {
     const field = form.elements[name];
