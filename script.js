@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const form = document.getElementById('guestForm');
   const statusBox = document.getElementById('status');
+  const attendance = document.getElementById('attendance');
   const transfer = document.getElementById('transfer');
   const transferDetails = document.getElementById('transferDetails');
 
@@ -13,67 +14,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const submitButton = form.querySelector('button[type="submit"]');
 
-  const attendance = form.elements['attendance'];
-const guestCount = form.elements['guestCount'];
-
-function updateAttendanceMode() {
-  const isNotComing = attendance && attendance.value === 'Нет, не смогу';
-
-  if (guestCount) {
-    guestCount.required = !isNotComing;
-
-    if (isNotComing) {
-      guestCount.value = '';
-    }
+  function isNotComing() {
+    return attendance && attendance.value === 'Нет, не смогу';
   }
-
-  if (transfer) {
-    transfer.required = !isNotComing;
-
-    if (isNotComing) {
-      transfer.value = '';
-    }
-  }
-
-  if (transferDetails && isNotComing) {
-    transferDetails.classList.add('hidden');
-  }
-
-  const transferCity = form.elements['transferCity'];
-  const transferDistrict = form.elements['transferDistrict'];
-
-  if (isNotComing) {
-    if (transferCity) transferCity.value = '';
-    if (transferDistrict) transferDistrict.value = '';
-  }
-}
-
-if (attendance) {
-  attendance.addEventListener('change', updateAttendanceMode);
-  updateAttendanceMode();
-}
 
   function showTransferDetails() {
-  if (!transfer || !transferDetails) return;
+    if (!transfer || !transferDetails) return;
 
-  const isNotComing = attendance && attendance.value === 'Нет, не смогу';
+    if (isNotComing()) {
+      transferDetails.classList.add('hidden');
+      return;
+    }
 
-  if (isNotComing) {
-    transferDetails.classList.add('hidden');
-    return;
+    transferDetails.classList.toggle('hidden', transfer.value !== 'Да');
   }
 
-  transferDetails.classList.toggle('hidden', transfer.value !== 'Да');
-}
+  function updateAttendanceMode() {
+    const notComing = isNotComing();
+
+    if (transfer) {
+      transfer.required = !notComing;
+
+      if (notComing) {
+        transfer.value = '';
+      }
+    }
+
+    if (notComing) {
+      const transferCity = form.elements['transferCity'];
+      const transferDistrict = form.elements['transferDistrict'];
+
+      if (transferCity) transferCity.value = '';
+      if (transferDistrict) transferDistrict.value = '';
+    }
+
+    showTransferDetails();
+  }
+
+  if (attendance) {
+    attendance.addEventListener('change', updateAttendanceMode);
+    updateAttendanceMode();
+  }
 
   if (transfer) {
-  transfer.addEventListener('change', showTransferDetails);
-  showTransferDetails();
-}
-
-if (attendance) {
-  attendance.addEventListener('change', showTransferDetails);
-}
+    transfer.addEventListener('change', showTransferDetails);
+    showTransferDetails();
+  }
 
   function valueOf(name) {
     const field = form.elements[name];
@@ -96,6 +82,7 @@ if (attendance) {
 
   function getOrCreateHiddenIframe() {
     let iframe = document.getElementById('googleSubmitFrame');
+
     if (!iframe) {
       iframe = document.createElement('iframe');
       iframe.name = 'googleSubmitFrame';
@@ -103,6 +90,7 @@ if (attendance) {
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
     }
+
     return iframe;
   }
 
@@ -111,6 +99,10 @@ if (attendance) {
 
     if (transferDetails) {
       transferDetails.classList.add('hidden');
+    }
+
+    if (transfer) {
+      transfer.required = true;
     }
 
     statusBox.textContent = 'Анкета отправлена. Спасибо!';
@@ -162,7 +154,6 @@ if (attendance) {
     const payload = {
       fullName: valueOf('fullName'),
       attendance: valueOf('attendance'),
-      guestCount: valueOf('guestCount'),
       transfer: valueOf('transfer'),
       transferCity: valueOf('transferCity'),
       transferDistrict: valueOf('transferDistrict'),

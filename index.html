@@ -108,7 +108,7 @@
               <ul class="dress-list">
                 <li>Молочный, песочный, зелёный, пудрово-розовый или оливковый оттенок.</li>
                 <li>Не обязательно одеваться строго в один цвет — достаточно поддержать гамму деталями.</li>
-                <li>Просим избегать слишком ярких кислотных цветов и полностью белых образов.</li>
+                <li>Просим избегать слишком ярких кислотных цветов.</li>
               </ul>
             </div>
           </div>
@@ -133,7 +133,7 @@
 
               <label>
                 Вы сможете прийти?
-                <select name="attendance" required>
+                <select name="attendance" id="attendance" required>
                   <option value="" selected disabled>Выберите вариант</option>
                   <option value="Да, приду">Да, приду</option>
                   <option value="Нет, не смогу">Нет, не смогу</option>
@@ -141,16 +141,7 @@
               </label>
             </div>
 
-            <div class="row">
-              <label>
-                Вы будете один/одна или вдвоём?
-                <select name="guestCount" required>
-                  <option value="" selected disabled>Выберите вариант</option>
-                  <option value="Один/одна">Один/одна</option>
-                  <option value="Вдвоём">Вдвоём</option>
-                </select>
-              </label>
-
+            <div class="row single-row">
               <label>
                 Нужен ли трансфер?
                 <select name="transfer" id="transfer" required>
